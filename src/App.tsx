@@ -1,5 +1,14 @@
+import { Experiment } from '@/components/Experiment';
+import { useMenu } from '@/hooks/useMenu';
+
 function App() {
-  return <main className="container">Container</main>;
+  const buttonRef = useMenu();
+
+  return (
+    <main className="container">
+      <Experiment buttonRef={buttonRef} />
+    </main>
+  );
 }
 
 export default App;

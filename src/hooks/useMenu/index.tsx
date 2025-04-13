@@ -1,49 +1,51 @@
+import type { MenuItemOptions } from '@tauri-apps/api/menu';
+
+import { useMenuActions } from '@/store/menu';
 import { Menu } from '@tauri-apps/api/menu';
+import { useRef } from 'react';
 
 export async function useMenu() {
+  const { setChosenMenu } = useMenuActions();
+  const buttonElement = document.createElement('button');
+  const buttonRef = useRef(buttonElement);
+
+  const action: MenuItemOptions['action'] = (id) => {
+    console.log(`${id} pressed`);
+    setChosenMenu(id);
+    buttonRef.current.click();
+  };
+
   const menu = await Menu.new({
     items: [
       {
         id: 'file',
         text: 'File',
-        action: () => {
-          console.log('File pressed');
-        },
+        action,
         items: [
           {
             id: 'newFile',
             text: 'New File',
-            action: () => {
-              console.log('New File pressed');
-            },
+            action,
           },
           {
             id: 'createFile',
             text: 'Create File',
-            action: () => {
-              console.log('Create File pressed');
-            },
+            action,
           },
           {
             id: 'openFile',
             text: 'Open File',
-            action: () => {
-              console.log('Open File pressed');
-            },
+            action,
           },
           {
             id: 'openRecent',
             text: 'Open Recent',
-            action: () => {
-              console.log('Open Recent pressed');
-            },
+            action,
             items: [
               {
                 id: 'more',
                 text: 'More',
-                action: () => {
-                  console.log('More pressed');
-                },
+                action,
               },
             ],
           },
@@ -52,160 +54,116 @@ export async function useMenu() {
       {
         id: 'edit',
         text: 'Edit',
-        action: () => {
-          console.log('Edit pressed');
-        },
+        action,
         items: [
           {
             id: 'editUndo',
             text: 'Undo',
-            action: () => {
-              console.log('Undo pressed');
-            },
+            action,
           },
           {
             id: 'editRedo',
             text: 'Redo',
-            action: () => {
-              console.log('Redo pressed');
-            },
+            action,
           },
           {
             id: 'editCut',
             text: 'Cut',
-            action: () => {
-              console.log('Cut pressed');
-            },
+            action,
           },
           {
             id: 'editCopy',
             text: 'Copy',
-            action: () => {
-              console.log('Copy pressed');
-            },
+            action,
           },
           {
             id: 'editFind',
             text: 'Find',
-            action: () => {
-              console.log('Find pressed');
-            },
+            action,
           },
           {
             id: 'editReplace',
             text: 'Replace',
-            action: () => {
-              console.log('Replace pressed');
-            },
+            action,
           },
         ],
       },
       {
         id: 'help',
         text: 'Help',
-        action: () => {
-          console.log('help pressed');
-        },
+        action,
         items: [
           {
             id: 'helpWelcome',
             text: 'Welcome',
-            action: () => {
-              console.log('Welcome pressed');
-            },
+            action,
           },
           {
             id: 'helpDocumentation',
             text: 'Documentation',
-            action: () => {
-              console.log('Documentation pressed');
-            },
+            action,
           },
           {
             id: 'helpAbout',
             text: 'About',
-            action: () => {
-              console.log('About pressed');
-            },
+            action,
           },
           {
             id: 'helpLicense',
             text: 'License',
-            action: () => {
-              console.log('License pressed');
-            },
+            action,
           },
         ],
       },
       {
         id: 'view',
         text: 'View',
-        action: () => {
-          console.log('view pressed');
-        },
+        action,
         items: [
           {
             id: 'viewAppearance',
             text: 'Appearance',
-            action: () => {
-              console.log('Appearance pressed');
-            },
+            action,
             items: [
               {
                 id: 'viewAppearanceFullScreen',
                 text: 'Full Screen',
-                action: () => {
-                  console.log('Full Screen pressed');
-                },
+                action,
               },
               {
                 id: 'viewAppearanceZenMode',
                 text: 'Zen Mode',
-                action: () => {
-                  console.log('Zen Mode pressed');
-                },
+                action,
               },
               {
                 id: 'viewAppearanceCenteredLayout',
                 text: 'Centered Layout',
-                action: () => {
-                  console.log('Centered Layout pressed');
-                },
+                action,
               },
               {
                 id: 'viewAppearanceActivityBarPosition',
                 text: 'Activity Bar Position',
-                action: () => {
-                  console.log('Activity Bar Position pressed');
-                },
+                action,
                 items: [
                   {
                     id: 'viewAppearanceActivityBarPositionTop',
                     text: 'Top',
-                    action: () => {
-                      console.log('Top pressed');
-                    },
+                    action,
                   },
                   {
                     id: 'viewAppearanceActivityBarPositionLeft',
                     text: 'Left',
-                    action: () => {
-                      console.log('Left pressed');
-                    },
+                    action,
                   },
                   {
                     id: 'viewAppearanceActivityBarPositionRight',
                     text: 'Right',
-                    action: () => {
-                      console.log('Right pressed');
-                    },
+                    action,
                   },
                   {
                     id: 'viewAppearanceActivityBarPositionBottom',
                     text: 'Bottom',
-                    action: () => {
-                      console.log('Bottom pressed');
-                    },
+                    action,
                   },
                 ],
               },
@@ -214,37 +172,27 @@ export async function useMenu() {
           {
             id: 'viewLayout',
             text: 'Layout',
-            action: () => {
-              console.log('Layout pressed');
-            },
+            action,
             items: [
               {
                 id: 'viewLayoutSplitUp',
                 text: 'Split Up',
-                action: () => {
-                  console.log('Split Up pressed');
-                },
+                action,
               },
               {
                 id: 'viewLayoutSplitDown',
                 text: 'Split Down',
-                action: () => {
-                  console.log('Split Down pressed');
-                },
+                action,
               },
               {
                 id: 'viewLayoutSplitLeft',
                 text: 'Split Left',
-                action: () => {
-                  console.log('Split Left pressed');
-                },
+                action,
               },
               {
                 id: 'viewLayoutSplitRight',
                 text: 'Split Right',
-                action: () => {
-                  console.log('Split Right pressed');
-                },
+                action,
               },
             ],
           },
@@ -258,4 +206,6 @@ export async function useMenu() {
   menu.setAsAppMenu().then((res) => {
     console.log('menu set success', res);
   });
+
+  return buttonRef;
 }
