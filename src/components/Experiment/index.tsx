@@ -1,17 +1,22 @@
 import type { TMenuItem } from '@/types/menu';
 
-import { useMenu, useChosenMenu } from '@/store/menu';
+import { useExperimentActions } from '@/store/experiment';
+import { useMenu, useWindowMenu } from '@/store/menu';
 import { useState } from 'react';
+import { hicksLaw } from '@/utils';
 
 interface IExperimentProps {
-  buttonRef: any;
+  buttonRef: Promise<React.MutableRefObject<HTMLButtonElement>>;
 }
 
 export function Experiment({ buttonRef }: IExperimentProps) {
-  const [menuItem, setMenuItem] = useState<TMenuItem>({} as TMenuItem);
+  const { appendChartData, clearChartData } = useExperimentActions();
+  const [menuItem, setMenuItem] = useState<TMenuItem | null>(null);
+  const [isDisabled, setIsDisabled] = useState<boolean>(false);
 
-  const chosenMenu = useChosenMenu();
   const menu = useMenu();
+  const windowMenu = useWindowMenu();
+  console.log(windowMenu.rid);
 
   const setMenuItemToClick = () => {
     const randomIndex = Math.floor(Math.random() * menu.length);
@@ -19,42 +24,53 @@ export function Experiment({ buttonRef }: IExperimentProps) {
     setMenuItem(_menuItem);
   };
 
+  const test = async () => {
+    const items = await windowMenu.items();
+    console.log(items);
+  };
+
+  test();
+
+  const handleExperiment = async () => {
+    return new Promise(async (resolve) => {
+      const handleContextMenu = async () => {
+        console.log('handleContextMenu');
+        (await buttonRef).current?.removeEventListener('click', handleContextMenu);
+        resolve(true);
+      };
+      (await buttonRef).current?.addEventListener('click', handleContextMenu);
+    });
+  };
+
   const handleStartExperiment = async () => {
     try {
-      setMenuItemToClick();
+      setIsDisabled(true);
+      clearChartData();
+      for (let i = 0; i < 10; i++) {
+        setMenuItemToClick();
 
-      const startTime = Date.now();
-      console.log('startTime ', startTime);
-      await handleExperiment();
-      const endTime = Date.now();
-      console.log('endTime ', endTime);
+        const startTime = Date.now();
+        await handleExperiment();
+        const endTime = Date.now();
+        const diffTime = endTime - startTime;
+        appendChartData({ name: i.toString(), value: diffTime });
 
-      const diffTime = endTime - startTime;
-
-      console.log('diffTime', diffTime);
+        console.log('diffTime', diffTime);
+      }
+      setMenuItem(null);
     } catch (error) {
       console.log('error');
     } finally {
+      setIsDisabled(false);
     }
-  };
-
-  // Компоненты графического интерфейса
-
-  const handleExperiment = async () => {
-    return new Promise((resolve) => {
-      const handleContextMenu = () => {
-        console.log('handleContextMenu');
-        buttonRef.current?.addEventListener('onmenuclick', handleContextMenu);
-        resolve(true);
-      };
-      buttonRef.current?.removeEventListener('onmenuclick', handleContextMenu);
-    });
   };
 
   return (
     <div>
-      <p>{menuItem.name}</p>
-      <button onClick={handleStartExperiment}>Начать эксперимент</button>
+      <p>{menuItem?.name}</p>
+      <button onClick={handleStartExperiment} disabled={isDisabled}>
+        Начать эксперимент
+      </button>
     </div>
   );
 }

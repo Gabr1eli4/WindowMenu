@@ -5,14 +5,14 @@ import { Menu } from '@tauri-apps/api/menu';
 import { useRef } from 'react';
 
 export async function useMenu() {
-  const { setChosenMenu } = useMenuActions();
+  const { setChosenMenu, setWindowMenu } = useMenuActions();
   const buttonElement = document.createElement('button');
-  const buttonRef = useRef(buttonElement);
+  const buttonRef = useRef<HTMLButtonElement>(buttonElement);
 
   const action: MenuItemOptions['action'] = (id) => {
     console.log(`${id} pressed`);
     setChosenMenu(id);
-    buttonRef.current.click();
+    buttonRef?.current.click();
   };
 
   const menu = await Menu.new({
@@ -206,6 +206,8 @@ export async function useMenu() {
   menu.setAsAppMenu().then((res) => {
     console.log('menu set success', res);
   });
+
+  setWindowMenu(menu);
 
   return buttonRef;
 }

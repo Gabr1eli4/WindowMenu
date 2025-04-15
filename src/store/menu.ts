@@ -1,12 +1,15 @@
 import { TMenuItem } from '@/types/menu';
+import { Menu } from '@tauri-apps/api/menu';
 import { create } from 'zustand';
 
 interface IMenuStore {
   menu: Array<TMenuItem>;
+  windowMenu: Menu;
   chosenMenu: string;
   actions: {
     setMenu: (menu: Array<TMenuItem>) => void;
     setChosenMenu: (chosenMenu: string) => void;
+    setWindowMenu: (windowMenu: Menu) => void;
   };
 }
 
@@ -118,9 +121,11 @@ export const useMenuStore = create<IMenuStore>()((set) => ({
     },
   ],
   chosenMenu: '',
+  windowMenu: {} as Menu,
   actions: {
     setMenu: (menu) => set({ menu }),
     setChosenMenu: (chosenMenu) => set({ chosenMenu }),
+    setWindowMenu: (windowMenu) => set({ windowMenu }),
   },
 }));
 
@@ -128,3 +133,4 @@ export const useMenuActions = () => useMenuStore((state) => state.actions);
 
 export const useMenu = () => useMenuStore((state) => state.menu);
 export const useChosenMenu = () => useMenuStore((state) => state.chosenMenu);
+export const useWindowMenu = () => useMenuStore((state) => state.windowMenu);
