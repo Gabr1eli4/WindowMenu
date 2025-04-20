@@ -9,7 +9,7 @@ export async function useMenu() {
   const buttonElement = document.createElement('button');
   const buttonRef = useRef<HTMLButtonElement>(buttonElement);
 
-  const action: MenuItemOptions['action'] = (id) => {
+  const action: MenuItemOptions['action'] = async (id) => {
     console.log(`${id} pressed`);
     setChosenMenu(id);
     buttonRef?.current.click();
@@ -203,9 +203,7 @@ export async function useMenu() {
 
   // If a window was not created with an explicit menu or had one set explicitly,
   // this menu will be assigned to it.
-  menu.setAsAppMenu().then((res) => {
-    console.log('menu set success', res);
-  });
+  await menu.setAsAppMenu();
 
   setWindowMenu(menu);
 

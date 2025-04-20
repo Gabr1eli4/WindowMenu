@@ -1,13 +1,15 @@
 import type { TMenuItem } from '@/types/menu';
 
 import { useExperimentActions } from '@/store/experiment';
-import { useMenu, useWindowMenu } from '@/store/menu';
-import { useState } from 'react';
+import { useMenu } from '@/store/menu';
 import { hicksLaw } from '@/utils';
+import { useState } from 'react';
 
 interface IExperimentProps {
   buttonRef: Promise<React.MutableRefObject<HTMLButtonElement>>;
 }
+
+let depth: number | null = null;
 
 export function Experiment({ buttonRef }: IExperimentProps) {
   const { appendChartData, clearChartData } = useExperimentActions();
@@ -15,26 +17,17 @@ export function Experiment({ buttonRef }: IExperimentProps) {
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
 
   const menu = useMenu();
-  const windowMenu = useWindowMenu();
-  console.log(windowMenu.rid);
 
   const setMenuItemToClick = () => {
     const randomIndex = Math.floor(Math.random() * menu.length);
     const _menuItem = menu[randomIndex];
     setMenuItem(_menuItem);
+    depth = _menuItem.depth;
   };
-
-  const test = async () => {
-    const items = await windowMenu.items();
-    console.log(items);
-  };
-
-  test();
 
   const handleExperiment = async () => {
     return new Promise(async (resolve) => {
       const handleContextMenu = async () => {
-        console.log('handleContextMenu');
         (await buttonRef).current?.removeEventListener('click', handleContextMenu);
         resolve(true);
       };
@@ -53,15 +46,20 @@ export function Experiment({ buttonRef }: IExperimentProps) {
         await handleExperiment();
         const endTime = Date.now();
         const diffTime = endTime - startTime;
+        if (depth) {
+          const result = hicksLaw(depth);
+          console.log('hick law value = ', result);
+        }
+
         appendChartData({ name: i.toString(), value: diffTime });
 
         console.log('diffTime', diffTime);
       }
-      setMenuItem(null);
     } catch (error) {
       console.log('error');
     } finally {
       setIsDisabled(false);
+      setMenuItem(null);
     }
   };
 
